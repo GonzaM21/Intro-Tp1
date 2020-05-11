@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
   version: "1.0.0"
-  title: API de Alumnos
-  description: Documentación de la API de Alumnos de la materia 75.43 Introducción a Sistemas Distribuidos
+  title: TP1 - DNS over HTTPS
+  description: Docuemntación del TP1 de la materia 75.43 Introducción a Sistemas Distribuidos
 
 servers:
   - url: http://localhost:8080/api
@@ -10,112 +10,48 @@ servers:
 
 # Paths servidos por la aplicación
 paths:
-  /alumnos:
+  /domains/{domain}:
     get:
-      operationId: "api.alumnos.obtener_todos"
+      operationId: "api.domains.get_ip"
       tags:
-        - "Alumnos"
-      summary: "Colección de alumnos de la materia"
-      description: "Obtiene la lista de todos los alumnos de la materia existentes en el sistema"
+        - "Domains"
+      summary: "Obtención de IP de un dominio espeficifado"
+      description: "Obtiene la IP asociada a un dominio en particular, con este pudiedno ser un custom domain creado anteriormnente"
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El dominio del cual se quiere obtener una IP
       responses:
         200:
           description: "Operación de lectura exitosa"
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Alumno'
-    post:
-      operationId: "api.alumnos.crear"
-      tags:
-        - "Alumnos"
-      summary: "Alta de un alumno de la materia"
-      description: "Crea un nuevo alumno y lo agrega a la lista de alumnos de la materia"
-      requestBody:
-        required: true
-        x-body-name: 'alumno'
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/InputAlumno'
-      responses:
-        201:
-          description: "Se creo el alumno correctamente"
+                $ref: '#/components/schemas/Domain'
+        404:
+          description: "Dominio no encontrado"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Alumno'
-        400:
-          description: "DNI o padron duplicado"
-  /alumnos/{id_alumno}:
-    get:
-      operationId: "api.alumnos.obtener_uno"
-      tags:
-        - "Alumnos"
-      summary: "Alumno de la materia"
-      description: "Obtiene un alumno particular de la materia"
-      parameters:
-        - in: path
-          name: id_alumno
-          required: true
-          schema:
-            type: integer
-          description: El id del usuario a obtener
-      responses:
-        200:
-          description: "Operación de lectura exitosa"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Alumno'
-        404:
-          description: "Alumno no encontrado"
-    delete:
-      operationId: "api.alumnos.borrar"
-      tags:
-        - "Alumnos"
-      summary: "Borrar alumno de la materia"
-      description: "Borra un alumno de la materia"
-      parameters:
-        - in: path
-          name: id_alumno
-          required: true
-          schema:
-            type: integer
-          description: El id del usuario a borrar
-      responses:
-        204:
-          description: "Operación de lectura exitosa"
-        404:
-          description: "Alumno no encontrado"
+                $ref: '#/components/schemas/Error'
+
 # Declaración de tipos de datos
 components:
   schemas:
-    Alumno:
+    Domain:
       type: "object"
       properties:
-        id:
-          type: "number"
-        nombre:
+        domain:
           type: "string"
-        dni:
+        ip:
           type: "string"
-        padron:
-          type: "string"
-    InputAlumno:
-      type: "object"
-      properties:
-        nombre:
-          type: "string"
-        dni:
-          type: "string"
-        padron:
-          type: "string"
+        custom:
+          type: "boolean"
     Error:
       type: "object"
       properties:
         codigo:
           type: "number"
-        mensaje:
-          type: "string"
