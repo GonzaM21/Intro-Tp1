@@ -29,3 +29,18 @@ def get_ip(domain):
         return {"domain": domain, "ip": ip, "custom": False}
     except:
         return make_response({"error": "domain not found"})
+
+
+def create_domain(**kargs):
+    custom_domain = kargs.get("body")
+    domain_body = custom_domain.get('domain')
+    ip = custom_domain.get('ip')
+    if not domain_body or not ip:
+        return make_response({"error": "payload is invalid"}, 400)
+    for domain in custom_domains:
+        if domains[domain]["ip"] == ip:
+            return make_response({"error": "custom domain alredy exists"}, 400)
+        
+    custom_domains.add(domain_body)
+    domains[domain_body] = {"domain":domain_body, "ip": ip, "custom": True}
+    return make_response(domains[domain_body], 201)

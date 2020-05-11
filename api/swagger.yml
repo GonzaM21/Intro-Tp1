@@ -37,6 +37,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+                
+  /custom-domains:
+    post:
+      operationId: "api.domains.create_domain"
+      tags:
+        - "Domains"
+      summary: "Alta de un custom domain en el sistema"
+      description: "Crea una entrada para sobreescribir la IP de un dominio en particular"
+      requestBody:
+        required: true
+        x-body-name: 'domain'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Input'
+      responses:
+        201:
+          description: "Se creo el custom domain correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        400:
+          description: "Custom domain duplicado o request mal formado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 
 
 # Declaración de tipos de datos
 components:
@@ -55,3 +83,10 @@ components:
       properties:
         codigo:
           type: "number"
+    Input:
+      type: "object"
+      properties: 
+        domain:
+          type: "string"
+        ip:
+          type: "string"
