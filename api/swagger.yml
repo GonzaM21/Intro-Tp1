@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   version: "1.0.0"
   title: TP1 - DNS over HTTPS
-  description: Docuemntación del TP1 de la materia 75.43 Introducción a Sistemas Distribuidos
+  description: Documentación del TP1 de la materia 75.43 Introducción a Sistemas Distribuidos
 
 servers:
   - url: http://localhost:8080/api
@@ -65,6 +65,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error' 
+    put:
+      operationId: "api.domains.override_domain"
+      tags:
+        - "Domains"
+      summary: "Update de una entrada de un dominio custom"
+      description: "Pisa una entrada para un determinado dominio con una ip enviada en el payload del llamado."
+      requestBody:
+        required: true
+        x-body-name: 'domain'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Input'
+      responses:
+        200:
+          description: "Se creo el custom domain correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        400:
+          description: "Custom domain malformado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 
+        404:
+          description: "Custom domain no existente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 # Declaración de tipos de datos
 components:

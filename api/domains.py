@@ -10,25 +10,54 @@ custom_domains = set()
 
 
 def get_ip(domain):
-    try:
-        if not domain in domains:
-            result_dns = dns.resolver.query(domains)
-            ips = [ip.address for ip in result_dns]
-            domains[domain] = {"domain": domain,
-                                "ip": ips,
-                                "custom": False}
-        global domains_counter
-        ips = domains[domain]["ip"]
-        if domain in custom_domains: 
-               return {"domain": domain,
-                    "ip": ips,
-                    "custom": True}
+    """
+    Esta funcion maneja el request GET  /api/domains/{domain}
+
+    :domain         el dominio del cual quiero obtener el ip
+    :return:        200 Domain, 404 dominio no encontrado
+    """
+    if not domain in domains:
+        try:
+            result_dns = dns.resolver.query(domain)
+        except:
+            return make_response({"error": "domain not found"}, 404) 
         
-        ip = ips[domains_counter % len(ips)]
-        domains_counter += 1
-        return {"domain": domain, "ip": ip, "custom": False}
-    except:
-        return make_response({"error": "domain not found"})
+        ips = [ip.address for ip in result_dns]
+        domains[domain] = {"domain": domain,
+                            "ip": ips,
+                            "custom": False}          
+    global domains_counter
+    ips = domains[domain]["ip"]
+    if domain in custom_domains: 
+            return {"domain": domain,
+                "ip": ips,
+                "custom": True}
+    ip = ips[domains_counter % len(ips)]
+    domains_counter += 1
+    return {"domain": domain, "ip": ip, "custom": False}
+    
+
+def override_domain(**kargs):
+    """
+    Esta funcion maneja el request PUT  /api/custom-domains/{domain}
+
+     :param body:   el dominio a pisar y su ip
+    :return:        200 dominio pisado con la nueva ip, 404 dominio no encontrado,
+                    400 payload malformado.
+    """
+    overriding_domain = kargs.get('body')
+    domain = overriding_domain.get('domain')
+    ip = overriding_domain.get('ip')
+    if(not domain in domains): 
+        return make_response({"error": "domain not found"}, 404)
+    elif domain is None or ip is None:
+        return make_response({"error": "payload is invalid"}, 400)
+    else:
+        domains[domain] = ip
+        return make_response({"domain": domain,
+                              "ip": ip,
+                              "custom": True}, 
+                              200)
 
 
 def create_domain(**kargs):
