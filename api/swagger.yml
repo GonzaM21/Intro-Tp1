@@ -97,6 +97,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+                
+  /custom-domains/{domain}:
+    delete:
+      operationId: "api.domains.delete_domain"
+      tags:
+        - "Domains"
+      summary: "Borra una entrada de un dominio custom"
+      description: "Borra una entrada para un determinado dominio."
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El dominio del cual se quiere borrar la IP
+      responses:
+        200:
+          description: "Se eliminó correctamente el custom domain"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DName'
+        404:
+          description: "Custom domain no existente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 # Declaración de tipos de datos
 components:
@@ -110,6 +138,11 @@ components:
           type: "string"
         custom:
           type: "boolean"
+    DName:
+      type: "object"
+      properties:
+        domain:
+          type: "string" 
     Error:
       type: "object"
       properties:

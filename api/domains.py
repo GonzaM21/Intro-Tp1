@@ -41,7 +41,7 @@ def override_domain(**kargs):
     """
     Esta funcion maneja el request PUT  /api/custom-domains/{domain}
 
-     :param body:   el dominio a pisar y su ip
+    :param body:   el dominio a pisar y su ip
     :return:        200 dominio pisado con la nueva ip, 404 dominio no encontrado,
                     400 payload malformado.
     """
@@ -58,6 +58,20 @@ def override_domain(**kargs):
                               "ip": ip,
                               "custom": True}, 
                               200)
+
+def delete_domain(domain):
+    """
+    Esta funcion maneja el request DELETE  /api/custom-domains/{domain}
+
+    :domain         el dominio a borrar
+    :return:        200 dominio eliminado
+                    404 dominio custom no existente
+    """
+    if(not domain in custom_domains):
+        return make_response({"error": "domain not found"}, 404)
+    custom_domains.remove(domain)
+    del domains[domain]
+    return make_response({"domain": domain}, 201)
 
 
 def create_domain(**kargs):
