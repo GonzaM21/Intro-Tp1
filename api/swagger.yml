@@ -10,7 +10,7 @@ servers:
 
 # Paths servidos por la aplicación
 paths:
-  /domains/{domain}:
+  /domains/<domain>:
     get:
       operationId: "api.domains.get_ip"
       tags:
@@ -64,13 +64,43 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error' 
+                $ref: '#/components/schemas/Error'
+
+    get:
+      operationId: "api.domains.get_all_domains"
+      tags:
+        - "Domains"
+      summary: "Lista de los custom domains del sistema"
+      description: "Obtiene la lsita de todos los custom domains del sitema"
+      parameters:
+        - in: query
+          name: q
+          required: false
+          schema:
+            type: string
+          description: El filtro de custom domains
+      responses:
+        200:
+          description: "Operación de lectura exitosa"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+
+  /custom-domains/<domain>:
     put:
       operationId: "api.domains.override_domain"
       tags:
         - "Domains"
       summary: "Update de una entrada de un dominio custom"
       description: "Pisa una entrada para un determinado dominio con una ip enviada en el payload del llamado."
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El dominio del cual se quiere sobreescribit la ip
       requestBody:
         required: true
         x-body-name: 'domain'
@@ -98,7 +128,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
                 
-  /custom-domains/{domain}:
     delete:
       operationId: "api.domains.delete_domain"
       tags:

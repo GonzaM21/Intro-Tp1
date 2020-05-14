@@ -46,18 +46,16 @@ def override_domain(**kargs):
                     400 payload malformado.
     """
     overriding_domain = kargs.get('body')
+    domain_parameter = kargs.get('domain')
     domain = overriding_domain.get('domain')
     ip = overriding_domain.get('ip')
     if(not domain in domains): 
         return make_response({"error": "domain not found"}, 404)
-    elif domain is None or ip is None:
+    elif domain is None or ip is None or domain_parameter != domain:
         return make_response({"error": "payload is invalid"}, 400)
-    else:
-        domains[domain] = ip
-        return make_response({"domain": domain,
-                              "ip": ip,
-                              "custom": True}, 
-                              200)
+
+    domains[domain] = {"domain": domain, "ip": ip,"custom": True}
+    return make_response(domains[domain], 200)
 
 def delete_domain(domain):
     """
@@ -75,6 +73,13 @@ def delete_domain(domain):
 
 
 def create_domain(**kargs):
+    """
+    Esta funcion maneja el request POST  /api/custom-domains/
+
+    :param body:   el dominio y su ip
+    :return:        201 creacion del dominio con su ip,
+                    400 domian previamente creado.
+    """
     custom_domain = kargs.get("body")
     domain_body = custom_domain.get('domain')
     ip = custom_domain.get('ip')
@@ -87,3 +92,15 @@ def create_domain(**kargs):
     custom_domains.add(domain_body)
     domains[domain_body] = {"domain":domain_body, "ip": ip, "custom": True}
     return make_response(domains[domain_body], 201)
+
+def get_all_domains(q = None):
+    """
+    Esta funcion maneja el request GET /api/custom-domains
+
+    :return:       200 lista todos los custom domains existentes.
+    """
+    response = {"items": []}
+    for domain in domains:
+        if domains[domain]["custom"] and (q == None or q in domain):
+            response["item"].append(domains[domain])
+    response
