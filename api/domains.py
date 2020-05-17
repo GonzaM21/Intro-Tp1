@@ -102,5 +102,5 @@ def get_all_domains(q = None):
     response = {"items": []}
     for domain in domains:
         if domains[domain]["custom"] and (q == None or q in domain):
-            response["item"].append(domains[domain])
-    response
+            response["items"].append(domains[domain])
+    return response

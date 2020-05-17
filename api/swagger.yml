@@ -10,7 +10,7 @@ servers:
 
 # Paths servidos por la aplicación
 paths:
-  /domains/<domain>:
+  /domains/{domain}:
     get:
       operationId: "api.domains.get_ip"
       tags:
@@ -87,7 +87,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Domain'
 
-  /custom-domains/<domain>:
+  /custom-domains/{domain}:
     put:
       operationId: "api.domains.override_domain"
       tags:
